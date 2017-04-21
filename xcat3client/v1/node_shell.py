@@ -83,6 +83,66 @@ def _print_node_result(result, args, check=False):
         print('\nTotal: %d' % (total))
 
 
+def _parallel_create(func, nodes, total, split_num):
+    import eventlet
+    eventlet.monkey_patch(os=False)
+    import futurist
+    from futurist import waiters
+    data = []
+    i = 0
+    per_split = total / split_num
+    while i < split_num - 1:
+        data.append({'nodes': nodes[i * per_split:(i + 1) * per_split]})
+        i += 1
+    data.append({'nodes': nodes[i * per_split:]})
+    _executor = futurist.GreenThreadPoolExecutor(max_workers=split_num)
+    j = 0
+    futures = []
+    while j < split_num:
+        future = _executor.submit(func, data[j])
+        futures.append(future)
+        j += 1
+
+    done, not_done = waiters.wait_for_all(futures, 3600)
+    result = {'nodes': {}}
+    for r in done:
+        result['nodes'].update(r.result()['nodes'])
+
+    return result
+
+
+def _parallel_update(func, names, patch, total, split_num):
+    import eventlet
+    eventlet.monkey_patch(os=False)
+    import futurist
+    from futurist import waiters
+    patch_dicts = []
+    patch_dict = {'nodes': [], "patches": patch}
+    i = 0
+    per_split = total / split_num
+    while i < total:
+        if i != 0 and i % per_split == 0 and i != split_num * per_split:
+            patch_dicts.append(patch_dict)
+            patch_dict = {'nodes': [], "patches": patch}
+
+        patch_dict['nodes'].append({'name': names[i]})
+        i += 1
+    patch_dicts.append(patch_dict)
+
+    _executor = futurist.GreenThreadPoolExecutor(max_workers=split_num)
+    futures = []
+    for patch_dict in patch_dicts:
+        future = _executor.submit(func, patch_dict)
+        futures.append(future)
+
+    done, not_done = waiters.wait_for_all(futures, 3600)
+    result = {'nodes': {}}
+    for r in done:
+        result['nodes'].update(r.result()['nodes'])
+
+    return result
+
+
 @cliutils.arg(
     '--fields',
     metavar='<mgt,name,nics>',
@@ -169,7 +229,10 @@ def do_import(cc, args):
     while i < len(nodes):
         nodes[i] = dict((k, v) for k, v in six.iteritems(nodes[i]) if v)
         i += 1
-    result = cc.node.post(data)
+    if i > 3000:
+        result = _parallel_create(cc.node.post, nodes, i, 4)
+    else:
+        result = cc.node.post(data)
     _print_node_result(result, args, True)
 
 
@@ -240,7 +303,11 @@ def do_create(cc, args):
         if args.nic:
             node['nics_info'] = {'nics': args.nic}
         nodes['nodes'].append(node)
-    result = cc.node.post(nodes)
+    count = len(nodes['nodes'])
+    if count > 3000:
+        result = _parallel_create(cc.node.post, nodes['nodes'], count, 4)
+    else:
+        result = cc.node.post(nodes)
     _print_node_result(result, args, True)
 
 
@@ -284,8 +351,12 @@ def do_update(cc, args):
         if FIELD_DICT.has_key(key):
             p['path'] = p['path'].replace(key, FIELD_DICT[key])
     patch_dict = {'nodes': [], "patches": patch}
-    map(lambda x: patch_dict['nodes'].append({'name': x}), names)
-    result = cc.node.update(patch_dict)
+    count = len(names)
+    if count > 3000:
+        result = _parallel_update(cc.node.update, names, patch, count, 4)
+    else:
+        map(lambda x: patch_dict['nodes'].append({'name': x}), names)
+        result = cc.node.update(patch_dict)
     _print_node_result(result, args, True)
 
 
