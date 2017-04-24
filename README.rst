@@ -58,7 +58,7 @@ Basic Usage
                         service.
     set-boot-device     Set next boot device net or disk or cdrom.
     set-power           Power nodes on or off or reboot.
-    set-provision       Power nodes on or off or reboot.
+    set-provision       Deployment service for nodes (not complete).
     show                Show detailed information about node(s).
     update              Update information about registered node(s).
     network-create      Register network into xCAT3 service.
