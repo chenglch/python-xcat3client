@@ -167,7 +167,7 @@ def to_attrs_dict(attrs, VALID_FIELDS):
     for attr in attrs:
         k, v = attr.split('=')
         if k not in VALID_FIELDS:
-            print(_('Unsupport attrbute %s '), k)
+            print(_('Unsupport attrbute %s ' % k))
             exit(1)
         dct[k] = v
     return dct

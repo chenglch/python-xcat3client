@@ -16,9 +16,10 @@ from xcat3client.v1 import node_shell
 from xcat3client.v1 import network_shell
 from xcat3client.v1 import nic_shell
 from xcat3client.v1 import osimage_shell
+from xcat3client.v1 import service_shell
 
 COMMAND_MODULES = [
-    node_shell, network_shell, nic_shell, osimage_shell,
+    node_shell, network_shell, nic_shell, osimage_shell, service_shell
 ]
 
 

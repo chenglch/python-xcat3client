@@ -20,7 +20,7 @@ from xcat3client.common.i18n import _
 from xcat3client.common import utils
 from xcat3client import exc
 
-VALID_FIELDS = ('netmask', 'gateway', 'dhcpserver', 'dynamic_range',
+VALID_FIELDS = ('subnet', 'netmask', 'gateway', 'dhcpserver', 'dynamic_range',
                 'nameserver')
 
 
