@@ -21,7 +21,7 @@ from xcat3client.common import utils
 from xcat3client import exc
 
 VALID_FIELDS = ('subnet', 'netmask', 'gateway', 'dhcpserver', 'dynamic_range',
-                'nameserver')
+                'nameservers', 'domain')
 
 
 @cliutils.arg(

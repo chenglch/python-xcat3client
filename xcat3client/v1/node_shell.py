@@ -17,6 +17,7 @@ from __future__ import print_function
 
 import json
 import six
+import sys
 
 from xcat3client.common import cliutils
 from xcat3client.common.i18n import _
@@ -82,6 +83,9 @@ def _print_node_result(result, args, check=False):
     else:
         print('\nTotal: %d' % (total))
 
+    if success != total:
+        sys.exit(1)
+
 
 def _parallel_create(func, nodes, total, split_num):
     import eventlet
@@ -144,7 +148,8 @@ def _parallel_update(func, names, patch, total, split_num):
 
 
 @cliutils.arg(
-    '--fields',
+    '-i, --fields',
+    dest='fields',
     metavar='<mgt,name,nics>',
     default=None,
     help="Fields seperated by comma. Only these fields will be fetched from "
@@ -183,6 +188,9 @@ def do_show(cc, args):
         if 'nics' in fields:
             fields.remove('nics')
             fields.append('nics_info')
+        if 'control' in fields:
+            fields.remove('control')
+            fields.append('control_info')
         result = cc.node.show(nodes[0], fields)
         result = format(result)
         cliutils.print_dict(result)
@@ -432,14 +440,36 @@ def do_set_boot_device(cc, args):
     metavar='<nodes>',
     help="Multiple node names split by comma.")
 @cliutils.arg(
-    'target',
-    metavar='<target>',
-    choices=['diskfull', 'diskless', 'dhcp', 'hosts'],
-    help="'diskfull', 'diskless', or 'dhcp'.")
-def do_set_provision(cc, args):
+    '--state',
+    metavar='<state>',
+    choices=['nodeset', 'dhcp'],
+    nargs='?',
+    default='nodeset',
+    help="'nodeset' or 'dhcp'.")
+@cliutils.arg(
+    '--osimage',
+    metavar='<osimage>',
+    default=None,
+    help='osimage to setup')
+@cliutils.arg(
+    '--network',
+    metavar='<network>',
+    default=None,
+    help='network for node provision')
+@cliutils.arg(
+    '-d, --delete',
+    action='store_true',
+    dest='delete',
+    default=False,
+    help='Clean up related state, like un_dhcp, un_nodeset')
+def do_deploy(cc, args):
     """Deployment service for nodes (not complete)"""
     names = _get_node_from_args(args.nodes)
     nodes = {'nodes': []}
     map(lambda x: nodes['nodes'].append({'name': x}), names)
-    result = cc.node.set_provision_state(nodes, args.target)
+    state = args.state
+    if args.delete:
+        state = 'un_%s' % state
+    result = cc.node.set_provision_state(nodes, state, args.osimage,
+                                         args.network)
     _print_node_result(result, args, True)

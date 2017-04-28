@@ -34,62 +34,80 @@ Installation
 Command Example
 ===============
 
+ENV
+----
+
+Indicate the xcat3 controller url in the environment variable ::
+
+  export XCAT3_URL=http://<api_ip>:<api_port>
+
 Basic Usage
 ------------
 ::
 
-  # xcat3 --help
-  usage: xcat3 [--version] [--debug] [--json] [-v] [--xcat3-url XCAT3_URL]
-             [--max-retries MAX_RETRIES] [--retry-interval RETRY_INTERVAL]
-             <subcommand> ...
+  root@c910xxxx:~# xcat3 --help
+    usage: xcat3 [--version] [--debug] [--json] [-v] [--xcat3-url XCAT3_URL]
+                 [--max-retries MAX_RETRIES] [--retry-interval RETRY_INTERVAL]
+                 <subcommand> ...
 
-  Command-line interface to xCAT3 API.
-
-  Positional arguments:
-  <subcommand>
-    create              Enroll node(s) into xCAT3 service
-    delete              Unregister node(s) from the xCAT3 service.
-    export              Export node(s) information as a specific json data
-                        file
-    get-boot-device     Get next boot device of nodes.
-    get-power           Get power state of nodes.
-    import              Import node(s) information from json data file
-    list                List the node(s) which are registered with the xCAT3
-                        service.
-    set-boot-device     Set next boot device net or disk or cdrom.
-    set-power           Power nodes on or off or reboot.
-    set-provision       Deployment service for nodes (not complete).
-    show                Show detailed information about node(s).
-    update              Update information about registered node(s).
-    network-create      Register network into xCAT3 service.
-    network-delete      Unregister network from xCAT3 service.
-    network-list        List the network(s) which are registered with the
-                        xCAT3 service.
-    network-show        Show detailed information about network.
-    network-update      Update information about registered network(s).
-    nic-create          Register nic into xCAT3 service.
-    nic-delete          Unregister nic from xCAT3 service.
-    nic-list            List the nic(s) which are registered with the xCAT3
-                        service.
-    nic-show            Show detailed infomation about nic.
-    nic-update          Update information about registered nic(s).
-    osimage-delete      Unregister osimage from xCAT3 service.
-    osimage-list        List the osimage(s) which are registered with the
-                        xCAT3 service.
-    osimage-show        Show detailed information about osimage.
-    osimage-update      Update information about registered osimage.
-
-  # xcat3 help update
-    usage: xcat3 update <nodes> <attr=value> [<attr=value> ...]
-
-    Update information about registered node(s).
+    Command-line interface to xCAT3 API.
 
     Positional arguments:
-     <nodes>       Multiple node names split by comma.
-     <path=value>  Attribute to add, replace, or remove. Can be specified
-                   multiple times. if value is empty, remove operation will be
-                   taken.
+      <subcommand>
+        create              Enroll node(s) into xCAT3 service
+        delete              Unregister node(s) from the xCAT3 service.
+        deploy              Deployment service for nodes (not complete)
+        export              Export node(s) information as a specific json data
+                            file
+        get-boot-device     Get next boot device of nodes.
+        get-power           Get power state of nodes.
+        import              Import node(s) information from json data file
+        list                List the node(s) which are registered with the xCAT3
+                            service.
+        set-boot-device     Set next boot device net or disk or cdrom.
+        set-power           Power nodes on or off or reboot.
+        show                Show detailed information about node(s).
+        update              Update information about registered node(s).
+        network-create      Register network into xCAT3 service.
+        network-delete      Unregister network from xCAT3 service.
+        network-list        List the network(s) which are registered with the
+                            xCAT3 service.
+        network-show        Show detailed information about network.
+        network-update      Update information about registered network(s).
+        nic-create          Register nic into xCAT3 service.
+        nic-delete          Unregister nic from xCAT3 service.
+        nic-list            List the nic(s) which are registered with the xCAT3
+                            service.
+        nic-show            Show detailed infomation about nic.
+        nic-update          Update information about registered nic(s).
+        osimage-delete      Unregister osimage from xCAT3 service.
+        osimage-list        List the osimage(s) which are registered with the
+                            xCAT3 service.
+        osimage-show        Show detailed information about osimage.
+        osimage-update      Update information about registered osimage.
+        service-list        List the service(s) which are registered with the
+                            xCAT3 service.
+        service-show        Show detailed information about service.
+        bash-completion
+        help
 
+    Optional arguments:
+      --version             show program's version number and exit
+      --debug               Defaults to env[XCAT3CLIENT_DEBUG]
+      --json                Print JSON response without formatting.
+      -v, --verbose         Print more verbose output
+      --xcat3-url XCAT3_URL
+                            Defaults to env[XCAT3_URL]
+      --max-retries MAX_RETRIES
+                            Maximum number of retries in case of conflict error
+                            (HTTP 409). Defaults to env[XCAT3_MAX_RETRIES] or 5.
+                            Use 0 to disable retrying.
+      --retry-interval RETRY_INTERVAL
+                            Amount of time (in seconds) between retries in case of
+                            conflict error (HTTP 409). Defaults to
+                            env[XCAT3_RETRY_INTERVAL] or 2.
+
+    See "xcat3 help COMMAND" for help on a specific command.
 Create Node
 -----------
 

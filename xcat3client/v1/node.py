@@ -59,10 +59,15 @@ class NodeManager(base.Manager):
         url = '%s/power' % (self._resource_name)
         return self._get(url, body=nodes)
 
-    def set_provision_state(self, nodes, state):
+    def set_provision_state(self, nodes, state, osimage, subnet):
         """Set the provision state for the nodes."""
-
+        if not state:
+            state = 'nodeset'
         url = "%s/provision?target=%s" % (self._resource_name, state)
+        if osimage:
+            url += '&osimage=%s' % osimage
+        if subnet:
+            url += '&subnet=%s' % subnet
         return self._put(url, body=nodes)
 
     def set_boot_device(self, nodes, boot_device):
