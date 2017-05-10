@@ -376,42 +376,17 @@ def do_update(cc, args):
 @cliutils.arg(
     'power_state',
     metavar='<power-state>',
-    choices=['on', 'off', 'reboot'],
-    help="'on', 'off', or 'reboot'.")
-def do_set_power(cc, args):
-    """Power nodes on or off or reboot."""
+    choices=['on', 'off', 'reboot', 'status'],
+    help="'on', 'off', 'status' or 'reboot'.")
+def do_power(cc, args):
+    """Power operation on/off/reset/status for nodes"""
     names = _get_node_from_args(args.nodes)
     nodes = {'nodes': []}
     map(lambda x: nodes['nodes'].append({'name': x}), names)
-    result = cc.node.set_power_state(nodes, args.power_state)
-    _print_node_result(result, args, True)
-
-
-@cliutils.arg(
-    'nodes',
-    nargs=None,
-    metavar='<nodes>',
-    help="Multiple node names split by comma.")
-def do_get_power(cc, args):
-    """Get power state of nodes."""
-    names = _get_node_from_args(args.nodes)
-    nodes = {'nodes': []}
-    map(lambda x: nodes['nodes'].append({'name': x}), names)
-    result = cc.node.get_power_state(nodes)
-    _print_node_result(result, args, True)
-
-
-@cliutils.arg(
-    'nodes',
-    nargs=None,
-    metavar='<nodes>',
-    help="Multiple node names split by comma.")
-def do_get_boot_device(cc, args):
-    """Get next boot device of nodes."""
-    names = _get_node_from_args(args.nodes)
-    nodes = {'nodes': []}
-    map(lambda x: nodes['nodes'].append({'name': x}), names)
-    result = cc.node.get_boot_device(nodes)
+    if args.power_state == 'status':
+        result = cc.node.get_power_state(nodes)
+    else:
+        result = cc.node.set_power_state(nodes, args.power_state)
     _print_node_result(result, args, True)
 
 
@@ -423,14 +398,17 @@ def do_get_boot_device(cc, args):
 @cliutils.arg(
     'boot_device',
     metavar='<boot-device>',
-    choices=['net', 'disk', 'cdrom'],
-    help="'net', 'disk', or 'cdrom'.")
-def do_set_boot_device(cc, args):
-    """Set next boot device net or disk or cdrom."""
+    choices=['net', 'disk', 'status', 'cdrom'],
+    help="'net', 'disk', 'status' or 'cdrom'.")
+def do_bootdev(cc, args):
+    """Set/Get next boot device (net or disk or cdrom)."""
     names = _get_node_from_args(args.nodes)
     nodes = {'nodes': []}
     map(lambda x: nodes['nodes'].append({'name': x}), names)
-    result = cc.node.set_boot_device(nodes, args.boot_device)
+    if args.boot_device == 'status':
+        result = cc.node.get_boot_device(nodes)
+    else:
+        result = cc.node.set_boot_device(nodes, args.boot_device)
     _print_node_result(result, args, True)
 
 

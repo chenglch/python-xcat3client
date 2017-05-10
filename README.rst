@@ -45,7 +45,7 @@ Basic Usage
 ------------
 ::
 
-  root@c910xxxx:~# xcat3 --help
+    root@c910f04x40k22:/var/lib/xcat3/tftpboot/images/Ubuntu-Server16.04.1/x86_64# xcat3 --help
     usage: xcat3 [--version] [--debug] [--json] [-v] [--xcat3-url XCAT3_URL]
                  [--max-retries MAX_RETRIES] [--retry-interval RETRY_INTERVAL]
                  <subcommand> ...
@@ -54,18 +54,16 @@ Basic Usage
 
     Positional arguments:
       <subcommand>
+        bootdev             Set/Get next boot device (net or disk or cdrom).
         create              Enroll node(s) into xCAT3 service
         delete              Unregister node(s) from the xCAT3 service.
         deploy              Deployment service for nodes (not complete)
         export              Export node(s) information as a specific json data
                             file
-        get-boot-device     Get next boot device of nodes.
-        get-power           Get power state of nodes.
         import              Import node(s) information from json data file
         list                List the node(s) which are registered with the xCAT3
                             service.
-        set-boot-device     Set next boot device net or disk or cdrom.
-        set-power           Power nodes on or off or reboot.
+        power               Power operation on/off/reset/status for nodes
         show                Show detailed information about node(s).
         update              Update information about registered node(s).
         network-create      Register network into xCAT3 service.
@@ -108,6 +106,7 @@ Basic Usage
                             env[XCAT3_RETRY_INTERVAL] or 2.
 
     See "xcat3 help COMMAND" for help on a specific command.
+
 Create Node
 -----------
 
@@ -222,7 +221,7 @@ Get Power
 ---------
 ::
 
-  # xcat3 get-power node0,xcat3test1
+  root@xxxxx# xcat3 power node0,xcat3test1 status
   node0: on
   xcat3test1: on
 
