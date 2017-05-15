@@ -268,20 +268,12 @@ def do_list(cc, args):
     nargs=None,
     help="Multiple node names split by comma.")
 @cliutils.arg(
-    '--mgt',
-    metavar='<mgt>',
-    default=None,
-    help='management technique')
-@cliutils.arg(
-    '--netboot',
-    metavar='<netboot>',
-    default=None,
-    help='Netboot method, like pxe, petitboot, grub, yaboot etc.')
-@cliutils.arg(
-    '--arch',
-    metavar='<arch>',
-    default=None,
-    help='Architecture of machine, like x86_64, ppc64le, ppc64')
+    'attributes',
+    metavar='<path=value>',
+    nargs='+',
+    action='append',
+    default=[],
+    help="Attribute to add, Current support arch, netboot, mgt")
 @cliutils.arg(
     '-c', '--control',
     metavar='<key=value>[,<key=val>]',
@@ -302,15 +294,22 @@ def do_create(cc, args):
     """Enroll node(s) into xCAT3 service"""
     nodes = {'nodes': []}
     fields = ('arch', 'netboot', 'mgt', 'type')
+    attr_dict = {}
     names = _get_node_from_args(args.nodes)
+    for attr in args.attributes[0]:
+        key, value = utils.split_and_deserialize(attr)
+        if key not in fields:
+            raise exc.BadRequest('Can not support attribute %s' % key)
+        attr_dict[key] = value
 
     for name in names:
-        node = dict((k, getattr(args, k)) for k in fields if hasattr(args, k))
+        node = dict((k, v) for k, v in six.iteritems(attr_dict))
         node['name'] = name
         node['control_info'] = args.control
         if args.nic:
             node['nics_info'] = {'nics': args.nic}
         nodes['nodes'].append(node)
+
     count = len(nodes['nodes'])
     if count > 3000:
         result = _parallel_create(cc.node.post, nodes['nodes'], count, 4)
