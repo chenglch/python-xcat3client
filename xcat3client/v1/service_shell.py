@@ -36,8 +36,13 @@ def do_service_show(cc, args):
 def do_service_list(cc, args):
     """List the service(s) which are registered with the xCAT3 service."""
     services = cc.service.list()
-    names = ['hostname: %s type: %s online: %s workers: %s' % (
-        service.get('hostname'), service.get('type'), service.get('online'),
-        service.get('workers')) for
-             service in services['services']]
-    cliutils.print_list(names, args.json)
+    messages = []
+    for service in services['services']:
+        name = service.get('hostname')
+        online = 'online' if service.get('online') else 'offline'
+        message = '%(name)s(%(type)s): %(online)s' % {
+            'name': name, 'type': service.get('type'), 'online': online}
+        if service.get('online'):
+            message += ' workers: %s' % service.get('workers')
+        messages.append(message)
+    cliutils.print_list(messages, args.json)
