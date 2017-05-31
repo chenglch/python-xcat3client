@@ -20,6 +20,7 @@ from xcat3client.v1 import network
 from xcat3client.v1 import nic
 from xcat3client.v1 import osimage
 from xcat3client.v1 import service
+from xcat3client.v1 import passwd
 
 class Client(object):
     """Client for the xCAT3 v1 API.
@@ -39,3 +40,4 @@ class Client(object):
         self.nic = nic.NicManager(self.http_client)
         self.osimage = osimage.OSImageManager(self.http_client)
         self.service = service.ServiceManager(self.http_client)
+        self.passwd = passwd.PasswdManager(self.http_client)
