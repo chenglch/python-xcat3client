@@ -107,6 +107,7 @@ class XCAT3Shell(object):
         submodule = utils.import_versioned_module(version, 'shell')
         submodule.enhance_parser(parser, subparsers, self.subcommands)
         utils.define_commands_from_module(subparsers, self, self.subcommands)
+        self._add_bash_completion_subparser(subparsers)
         return parser
 
     def _setup_debugging(self, debug):
@@ -118,6 +119,13 @@ class XCAT3Shell(object):
             logging.basicConfig(
                 format="%(levelname)s %(message)s",
                 level=logging.CRITICAL)
+
+    def _add_bash_completion_subparser(self, subparsers):
+        subparser = subparsers.add_parser('bash_completion',
+                                          add_help=False,
+                                          formatter_class=HelpFormatter)
+        self.subcommands['bash_completion'] = subparser
+        subparser.set_defaults(func=self.do_bash_completion)
 
 
     def do_bash_completion(self):
