@@ -11,24 +11,17 @@ Supported operating systems:
 ============================
 
 * Ubuntu 14.04, 16.04
+* Redhat >= 7.0
 
-Pre-install steps
-=================
+Setup
+=====
 
-::
+Please refer the link `xcat-play <https://github.com/chenglch/xcat-play>`_ to
+setup python-xcat3client with ansible playbook.
 
-  apt-get update && apt-get install build-essential python-dev libssl-dev \
-  python-pip git
+Enable the environment variable defined in `/etc/profile.d/xcat3.sh` ::
 
-Installation
-============
-
-::
-
-  git clone https://github.com/chenglch/python-xcat3client.git
-  cd python-xcat3client
-  pip install -r requirements.txt
-  python setup.py develop
+  source /etc/profile.d/xcat3.sh
 
 
 Command Example
@@ -37,7 +30,8 @@ Command Example
 ENV
 ----
 
-Indicate the xcat3 controller url in the environment variable ::
+If you setup python-xcat3client manually please import the environment variable
+manually. ::
 
   export XCAT3_URL=http://<api_ip>:<api_port>
 
@@ -45,10 +39,10 @@ Basic Usage
 ------------
 ::
 
-    root@c910f04x40k22:/var/lib/xcat3/tftpboot/images/Ubuntu-Server16.04.1/x86_64# xcat3 --help
+    root@c910f05c01bc02k70:~# xcat3 --help
     usage: xcat3 [--version] [--debug] [--json] [-v] [--xcat3-url XCAT3_URL]
-                 [--max-retries MAX_RETRIES] [--retry-interval RETRY_INTERVAL]
-                 <subcommand> ...
+             [--max-retries MAX_RETRIES] [--retry-interval RETRY_INTERVAL]
+             <subcommand> ...
 
     Command-line interface to xCAT3 API.
 
@@ -86,26 +80,12 @@ Basic Usage
         service-list        List the service(s) which are registered with the
                             xCAT3 service.
         service-show        Show detailed information about service.
-        bash-completion
-        help
-
-    Optional arguments:
-      --version             show program's version number and exit
-      --debug               Defaults to env[XCAT3CLIENT_DEBUG]
-      --json                Print JSON response without formatting.
-      -v, --verbose         Print more verbose output
-      --xcat3-url XCAT3_URL
-                            Defaults to env[XCAT3_URL]
-      --max-retries MAX_RETRIES
-                            Maximum number of retries in case of conflict error
-                            (HTTP 409). Defaults to env[XCAT3_MAX_RETRIES] or 5.
-                            Use 0 to disable retrying.
-      --retry-interval RETRY_INTERVAL
-                            Amount of time (in seconds) between retries in case of
-                            conflict error (HTTP 409). Defaults to
-                            env[XCAT3_RETRY_INTERVAL] or 2.
-
-    See "xcat3 help COMMAND" for help on a specific command.
+        passwd-create       Register passwd into xCAT3 service.
+        passwd-delete       Unregister passwd from xCAT3 service.
+        passwd-list         List the passwd(s) which are registered with the xCAT3
+                            service.
+        passwd-show         Show detailed information about passwd.
+        passwd-update       Update information about registered passwd.
 
 Create Node
 -----------
