@@ -43,10 +43,18 @@ class StoreDictKeyPairArray(argparse.Action):
         my_dict = {}
         for kv in values.split(","):
             k, v = kv.split("=")
-            my_dict[k] = v
+            my_dict[k] = str2bool(v)
         self.dict_list.append(my_dict)
         setattr(namespace, self.dest, self.dict_list)
 
+
+def str2bool(v):
+    """Retruns bool if the value is bool format, otherwise retrun value"""
+    if v.lower() in ("yes", "true", "y", "1"):
+        return True
+    elif v.lower() in ("no", "false", "0", "n"):
+        return False
+    return v
 
 def env(*args, **kwargs):
     """Returns the first environment variable set.
