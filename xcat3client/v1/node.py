@@ -35,10 +35,6 @@ class NodeManager(base.Manager):
             params = '&fields=' + ','.join(fields)
             url += '%s%s' % ('?', params)
         node = self._get(url, body=None)
-        if node.get('osimage_id'):
-            url = '%s/get_by_id?id=%s' % ('osimages', node['osimage_id'])
-            osimage = self._get(url, body=None)
-            node['osimage'] = osimage['name']
         return node
 
     def get(self, nodes, fields=None):

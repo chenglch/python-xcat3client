@@ -184,13 +184,14 @@ def do_show(cc, args):
         fields = args.fields.split(',')
     if fields and 'name' not in fields:
         fields.append('name')
+    if 'nics' in fields:
+        fields.remove('nics')
+        fields.append('nics_info')
+    if 'control' in fields:
+        fields.remove('control')
+        fields.append('control_info')
+
     if len(nodes) == 1:
-        if 'nics' in fields:
-            fields.remove('nics')
-            fields.append('nics_info')
-        if 'control' in fields:
-            fields.remove('control')
-            fields.append('control_info')
         result = cc.node.show(nodes[0], fields)
         result = format(result)
         cliutils.print_dict(result)
@@ -218,7 +219,9 @@ def do_export(cc, args):
     nodes = _get_node_from_args(args.nodes)
     node_dict = {'nodes': []}
     map(lambda x: node_dict['nodes'].append({'name': x}), nodes)
-    result = cc.node.get(node_dict)
+    fields = ['name', 'mgt', 'netboot', 'type', 'arch', 'nics_info',
+              'control_info']
+    result = cc.node.get(node_dict, fields)
     utils.write_to_file(args.output, json.dumps(result))
     print(_("Export nodes data succefully."))
 
