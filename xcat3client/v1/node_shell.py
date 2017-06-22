@@ -378,8 +378,8 @@ def do_update(cc, args):
 @cliutils.arg(
     'power_state',
     metavar='<power-state>',
-    choices=['on', 'off', 'reboot', 'status'],
-    help="'on', 'off', 'status' or 'reboot'.")
+    choices=['on', 'off', 'boot', 'status'],
+    help="'on', 'off', 'status' or 'boot'.")
 def do_power(cc, args):
     """Power operation on/off/reset/status for nodes"""
     names = _get_node_from_args(args.nodes)
